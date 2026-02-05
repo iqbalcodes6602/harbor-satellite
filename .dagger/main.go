@@ -210,7 +210,7 @@ func (m *HarborSatellite) TestReport(
 	reportName := "TestReport.json"
 
 	container := dag.Container().
-		From("golang:1.22-alpine").
+		From("golang:1.24.1-alpine").
 		WithMountedCache("/go/pkg/mod", dag.CacheVolume("go-mod")).
 		WithEnvVariable("GOMODCACHE", "/go/pkg/mod").
 		WithMountedCache("/go/build-cache", dag.CacheVolume("go-build")).
@@ -237,7 +237,7 @@ func (m *HarborSatellite) TestCoverage(
 	coverage := "coverage.out"
 
 	container := dag.Container().
-		From("golang:1.22-alpine").
+		From("golang:1.24.1-alpine").
 		WithMountedCache("/go/pkg/mod", dag.CacheVolume("go-mod")).
 		WithMountedCache("/go/build-cache", dag.CacheVolume("go-build")).
 		WithMountedDirectory("/src", source).
@@ -260,7 +260,7 @@ func (m *HarborSatellite) TestCoverageReport(
 	coverage := "coverage.out"
 
 	container := dag.Container().
-		From("golang:1.22-alpine").
+		From("golang:1.24.1-alpine").
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
 		WithExec([]string{"apk", "add", "--no-cache", "bc"}).
