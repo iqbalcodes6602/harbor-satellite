@@ -215,7 +215,7 @@ func (m *HarborSatellite) TestReport(
 		WithEnvVariable("GOMODCACHE", "/go/pkg/mod").
 		WithMountedCache("/go/build-cache", dag.CacheVolume("go-build")).
 		WithEnvVariable("GOCACHE", "/go/build-cache").
-		WithExec([]string{"go", "install", "gotest.tools/gotestsum@latest"}).
+		WithExec([]string{"go", "install", "gotest.tools/gotestsum@v1.12.0"}).
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
 		WithExec([]string{
