@@ -215,6 +215,8 @@ func (m *HarborSatellite) TestReport(
 		WithEnvVariable("GOMODCACHE", "/go/pkg/mod").
 		WithMountedCache("/go/build-cache", dag.CacheVolume("go-build")).
 		WithEnvVariable("GOCACHE", "/go/build-cache").
+		// 🔧 Fix: machine-id required by identity tests
+		WithExec([]string{"sh", "-c", "echo test-machine-id > /etc/machine-id"}).
 		WithExec([]string{"go", "install", "gotest.tools/gotestsum@v1.12.0"}).
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
@@ -242,6 +244,8 @@ func (m *HarborSatellite) TestCoverage(
 		WithMountedCache("/go/build-cache", dag.CacheVolume("go-build")).
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
+		// 🔧 Same environment fix for consistency
+		WithExec([]string{"sh", "-c", "echo test-machine-id > /etc/machine-id"}).
 		WithExec([]string{
 			"go", "test", "./...",
 			"-coverprofile=" + coverage,
@@ -264,6 +268,8 @@ func (m *HarborSatellite) TestCoverageReport(
 		WithMountedDirectory("/src", source).
 		WithWorkdir("/src").
 		WithExec([]string{"apk", "add", "--no-cache", "bc"}).
+		// 🔧 Same environment fix for consistency
+		WithExec([]string{"sh", "-c", "echo test-machine-id > /etc/machine-id"}).
 		WithExec([]string{
 			"go", "test", "./...",
 			"-coverprofile=" + coverage,
