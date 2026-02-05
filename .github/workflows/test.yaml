@@ -48,7 +48,7 @@ jobs:
       - name: Dagger Version
         uses: sagikazarmark/dagger-version-action@v0.0.1
 
-      # Run tests and export structured JSON report
+      # Generate structured test report
       - name: Run Unit Tests
         uses: dagger/dagger-for-github@v7
         with:
@@ -56,13 +56,13 @@ jobs:
           verb: call
           args: test-report --source=. export --path=TestReport.json
 
-      # Render test UI in PR checks
+      # Render PR Checks UI
       - name: Summarize Tests
         uses: robherley/go-test-action@v0.6.0
         with:
           fromJSONFile: TestReport.json
 
-      # Optional: coverage (PR only)
+      # Coverage (PR only)
       - name: Generate Coverage Report
         if: github.event_name == 'pull_request'
         uses: dagger/dagger-for-github@v7
@@ -71,7 +71,7 @@ jobs:
           verb: call
           args: test-coverage-report --source=. export --path=coverage-report.md
 
-      - name: Add coverage summary
+      - name: Add coverage to summary
         if: github.event_name == 'pull_request'
         run: cat coverage-report.md >> $GITHUB_STEP_SUMMARY
 
