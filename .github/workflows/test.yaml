@@ -1,6 +1,8 @@
 name: Test Pipeline
 
 on:
+  push:
+    branches: [main]
   pull_request:
     paths-ignore:
       - "*.md"
@@ -36,6 +38,42 @@ jobs:
               # temporarrily disabled vuln check
               exit 0
           fi
+
+  test-code:
+    name: Unit Tests (Satellite + Ground Control)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Dagger Version
+        uses: sagikazarmark/dagger-version-action@v0.0.1
+
+      # Run tests and export structured JSON report
+      - name: Run Unit Tests
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: ${{ steps.dagger_version.outputs.version }}
+          verb: call
+          args: test-report --source=. export --path=TestReport.json
+
+      # Render test UI in PR checks
+      - name: Summarize Tests
+        uses: robherley/go-test-action@v0.6.0
+        with:
+          fromJSONFile: TestReport.json
+
+      # Optional: coverage (PR only)
+      - name: Generate Coverage Report
+        if: github.event_name == 'pull_request'
+        uses: dagger/dagger-for-github@v7
+        with:
+          version: ${{ steps.dagger_version.outputs.version }}
+          verb: call
+          args: test-coverage-report --source=. export --path=coverage-report.md
+
+      - name: Add coverage summary
+        if: github.event_name == 'pull_request'
+        run: cat coverage-report.md >> $GITHUB_STEP_SUMMARY
 
   test-release:
     runs-on: ubuntu-latest
